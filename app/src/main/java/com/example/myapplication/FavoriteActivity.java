@@ -108,5 +108,8 @@ public class FavoriteActivity extends AppCompatActivity {
         // Simulate the user favoriting some items
         currentUser.addFavorite("prod2"); // User likes the sold desk lamp
         currentUser.addFavorite("prod3"); // User likes the available mini fridge
+        currentUser.addFavorite("prod4"); // User likes the pending chair
+        currentUser.addFavorite("prod1"); // User likes the textbook
+
     }
 }

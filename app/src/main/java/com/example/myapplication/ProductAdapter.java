@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -15,6 +18,7 @@ import java.util.Locale;
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
 
     private List<Product> productList;
+    private Context context;
 
     // Constructor to initialize the list
     public ProductAdapter(List<Product> productList) {
@@ -26,7 +30,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_product, parent, false);
+        // Get the context from the parent viewgroup
+        context = parent.getContext();
+        View view = LayoutInflater.from(context).inflate(R.layout.item_product, parent, false);
         return new ProductViewHolder(view);
     }
 
@@ -34,7 +40,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product currentProduct = productList.get(position);
-        holder.bind(currentProduct);
+        holder.bind(currentProduct, context);
     }
 
     // Returns the total number of items in the list.
@@ -68,11 +74,28 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         }
 
         // Helper method to set the data on the views
-        public void bind(Product product) {
+        public void bind(Product product, Context context) {
             productNameTextView.setText(product.getName());
             // Format the price to show as currency
             productPriceTextView.setText(String.format(Locale.US, "$%.2f", product.getPrice()));
             productStatusTextView.setText(product.getStatus());
+
+            GradientDrawable statusBackground = (GradientDrawable) productStatusTextView.getBackground();
+
+            String status = product.getStatus();
+            if (status != null) {
+                if (status.equalsIgnoreCase("Available")) {
+                    // Use ContextCompat to get the color safely
+                    statusBackground.setColor(ContextCompat.getColor(context, R.color.status_available));
+                } else if (status.equalsIgnoreCase("Pending")) {
+                    statusBackground.setColor(ContextCompat.getColor(context, R.color.status_pending));
+                } else if (status.equalsIgnoreCase("Sold")) {
+                    statusBackground.setColor(ContextCompat.getColor(context, R.color.status_sold));
+                } else {
+                    // Default color if status is something else
+                    statusBackground.setColor(ContextCompat.getColor(context, R.color.darker_gray));
+                }
+            }
 
             // Here you would use a library like Glide or Picasso to load the image from a URL
             // For now, we'll just set a placeholder.
