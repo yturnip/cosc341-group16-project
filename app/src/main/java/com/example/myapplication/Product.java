@@ -1,0 +1,62 @@
+package com.example.myapplication;
+
+// Create this file in its own Product.java file
+public class Product {
+    private String id;
+    private String name;
+    private double price;
+    private String imageUrl; // URL to the product image
+    private String status; // "Available", "Pending", "Sold"
+    private String sellerId; // To know who is selling it
+    private String condition;
+    private String category;
+    private String description;
+    private String location;
+
+    // Constructor
+    public Product(String id, String name, double price, String imageUrl, String status, String sellerId, String condition, String category, String description, String location) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.status = status;
+        this.sellerId = sellerId;
+        this.condition = condition;
+        this.category = category;
+        this.description = description;
+        this.location = location;
+    }
+
+    // Getters (and maybe Setters if you need to change data later)
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getSellerId() {
+        return sellerId;
+    }
+
+    public String getCategory() { return category; }
+
+    public String getCondition() { return condition; }
+
+    public String getDescription() { return description; }
+
+    public String getLocation() { return location; }
+}
