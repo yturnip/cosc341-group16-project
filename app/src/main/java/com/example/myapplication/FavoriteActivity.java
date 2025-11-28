@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -17,13 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FavoriteActivity extends AppCompatActivity {
+public class FavoriteActivity extends AppCompatActivity implements ProductAdapter.OnFavoriteClickListener {
 
-    private List<Product> allProducts;
     private List<Product> favoriteProducts;
     private ProductAdapter productAdapter;
     private RecyclerView favoritesRecyclerView;
-    private User currentUser;
+    private ProductRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +36,15 @@ public class FavoriteActivity extends AppCompatActivity {
             return insets;
         });
 
-        loadSampleData();
+        // 1. Get the single instance of the repository
+        repository = ProductRepository.getInstance();
 
-        filterFavorites();
+        // 2. Get the favorite products directly from the repository
+        favoriteProducts = repository.getFavoriteProducts();
 
+        // 3. Setup RecyclerView with the data
         favoritesRecyclerView = findViewById(R.id.favoritesRecyclerView);
-        productAdapter = new ProductAdapter(favoriteProducts);
+        productAdapter = new ProductAdapter(favoriteProducts, this); // Pass the list to the adapter
         favoritesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         favoritesRecyclerView.setAdapter(productAdapter);
 
@@ -55,26 +58,49 @@ public class FavoriteActivity extends AppCompatActivity {
         BottomNavigationView bnv = findViewById(R.id.bottom_navigation);
 
         bnv.setSelectedItemId(R.id.nav_fav);
-    }
+        bnv.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
 
-    private void filterFavorites() {
-        if (currentUser == null || allProducts == null) {
-            favoriteProducts = new ArrayList<>();
-            return;
-        }
+            if (itemId == R.id.nav_home) {
+                // Navigate to MainActivity
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                // Optional: finish the current activity so the user can't go back to it
+                finish();
+                return true;
 
-        List<String> favoriteIds = currentUser.getFavoriteProductIds();
+            } else if (itemId == R.id.nav_fav) {
+                // We are already on this screen, so do nothing.
+                return true;
 
-        favoriteProducts = allProducts.stream()
-                .filter(product -> favoriteIds.contains(product.getId()))
-                .collect(Collectors.toList());
+            } else if (itemId == R.id.nav_sell) {
+                // Navigate to SellActivity (assuming you have one)
+                startActivity(new Intent(getApplicationContext(), SellActivity.class));
+                finish();
+                return true;
+
+            /*} else if (itemId == R.id.nav_chat) {
+                // Navigate to ChatActivity (assuming you have one)
+                startActivity(new Intent(getApplicationContext(), ChatActivity.class));
+                finish();
+                return true;
+
+            } else if (itemId == R.id.nav_user) {
+                // Navigate to ProfileActivity (assuming you have one)
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                finish();
+                return true;
+            */}
+
+            return false;
+        });
     }
 
     private void applyStatusFilter(int checkedId) {
+        List<Product> baseList = repository.getFavoriteProducts(); // <-- Get the fresh list
         List<Product> filteredByStatus = new ArrayList<>();
 
         if(checkedId == R.id.btnAll) {
-            filteredByStatus.addAll(favoriteProducts);
+            filteredByStatus.addAll(baseList);
         } else {
             String status = "";
             if (checkedId == R.id.btnAvailable) {
@@ -86,30 +112,26 @@ public class FavoriteActivity extends AppCompatActivity {
             }
 
             String finalStatus = status;
-            filteredByStatus = favoriteProducts.stream()
+            filteredByStatus = baseList.stream() // <-- Filter from the fresh list
                     .filter(p -> p.getStatus().equalsIgnoreCase(finalStatus))
                     .collect(Collectors.toList());
         }
 
         productAdapter.updateList(filteredByStatus);
     }
+    // --- THIS IS THE METHOD THAT WILL BE CALLED WHEN THE HEART ICON IS CLICKED ---
+    @Override
+    public void onFavoriteClick(Product product) {
+        // 1. Tell the repository to remove the favorite
+        repository.getCurrentUser().removeFavorite(product.getId());
 
-    private void loadSampleData() {
-        // Sample User
-        currentUser = new User("user123", "Alex", "url_to_profile_pic");
+        // 2. Get the new, updated list of favorites
+        List<Product> updatedFavorites = repository.getFavoriteProducts();
 
-        // Sample Products
-        allProducts = new ArrayList<>();
-        allProducts.add(new Product("prod1", "Textbook", 25.00, "url", "Available", "sellerA", "Used", "School Stuff", "Good", "Kelowna"));
-        allProducts.add(new Product("prod2", "Desk Lamp", 15.00, "url", "Sold", "sellerB", "Used", "School Stuff", "Good", "Kelowna"));
-        allProducts.add(new Product("prod3", "Mini Fridge", 50.00, "url", "Available", "sellerC", "Used", "School Stuff", "Good", "Kelowna"));
-        allProducts.add(new Product("prod4", "Chair", 20.00, "url", "Pending", "sellerA", "Used", "School Stuff", "Good", "Kelowna"));
+        // 3. Tell the adapter to update its data and refresh the screen
+        productAdapter.updateList(updatedFavorites);
 
-        // Simulate the user favoriting some items
-        currentUser.addFavorite("prod2"); // User likes the sold desk lamp
-        currentUser.addFavorite("prod3"); // User likes the available mini fridge
-        currentUser.addFavorite("prod4"); // User likes the pending chair
-        currentUser.addFavorite("prod1"); // User likes the textbook
-
+        // 4. Also update the local list used by the filter buttons
+        this.favoriteProducts = updatedFavorites;
     }
 }

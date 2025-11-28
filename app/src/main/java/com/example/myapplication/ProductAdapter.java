@@ -5,6 +5,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,10 +20,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     private List<Product> productList;
     private Context context;
+    private final OnFavoriteClickListener listener;
 
+    public interface OnFavoriteClickListener {
+        void onFavoriteClick(Product product);
+    }
     // Constructor to initialize the list
-    public ProductAdapter(List<Product> productList) {
+    public ProductAdapter(List<Product> productList, OnFavoriteClickListener listener) {
         this.productList = productList;
+        this.listener = listener;
     }
 
     // This method is called when the RecyclerView needs a new ViewHolder.
@@ -33,7 +39,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         // Get the context from the parent viewgroup
         context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.item_product, parent, false);
-        return new ProductViewHolder(view);
+        return new ProductViewHolder(view, listener);
     }
 
     // This method binds the data from your productList to the views in the ViewHolder.
@@ -64,13 +70,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         private final TextView productNameTextView;
         private final TextView productPriceTextView;
         private final TextView productStatusTextView;
+        private final ImageButton favoriteButton;
+        private final OnFavoriteClickListener listener;
 
-        public ProductViewHolder(@NonNull View itemView) {
+
+        public ProductViewHolder(@NonNull View itemView, final OnFavoriteClickListener listener) {
             super(itemView);
+            this.listener = listener;
             productImageView = itemView.findViewById(R.id.productImageView);
             productNameTextView = itemView.findViewById(R.id.productNameTextView);
             productPriceTextView = itemView.findViewById(R.id.productPriceTextView);
             productStatusTextView = itemView.findViewById(R.id.productStatusTextView);
+            favoriteButton = itemView.findViewById(R.id.favoriteButton);
         }
 
         // Helper method to set the data on the views
@@ -96,6 +107,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
                     statusBackground.setColor(ContextCompat.getColor(context, R.color.darker_gray));
                 }
             }
+            favoriteButton.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onFavoriteClick(product);
+                }
+            });
 
             // Here you would use a library like Glide or Picasso to load the image from a URL
             // For now, we'll just set a placeholder.
