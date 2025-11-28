@@ -93,7 +93,7 @@ public class SellActivity extends AppCompatActivity {
         previewsRecyclerView.setAdapter(imagePreviewAdapter);
 
         backToHome.setOnClickListener(v -> {
-            Intent homeIntent = new Intent(SellActivity.this, MainActivity.class);
+            Intent homeIntent = new Intent(SellActivity.this, HomeActivity.class);
             startActivity(homeIntent);
             finish();
         });

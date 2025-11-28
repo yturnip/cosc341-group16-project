@@ -63,7 +63,7 @@ public class FavoriteActivity extends AppCompatActivity implements ProductAdapte
 
             if (itemId == R.id.nav_home) {
                 // Navigate to MainActivity
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                 // Optional: finish the current activity so the user can't go back to it
                 finish();
                 return true;
