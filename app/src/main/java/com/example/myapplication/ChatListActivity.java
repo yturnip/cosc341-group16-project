@@ -5,6 +5,9 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,5 +46,37 @@ public class ChatListActivity extends AppCompatActivity {
         });
 
         recyclerView.setAdapter(chatUserAdapter);
+        setupBottomNavigation();
+    }
+
+    private void setupBottomNavigation() {
+        BottomNavigationView bnv = findViewById(R.id.bottom_navigation);
+
+        // Set the "Chat" item as the selected one since we are on the Chat screen
+        bnv.setSelectedItemId(R.id.nav_chat);
+
+        bnv.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.nav_home) {
+                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_fav) {
+                startActivity(new Intent(getApplicationContext(), FavoriteActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_sell) {
+                startActivity(new Intent(getApplicationContext(), SellActivity.class));
+                return true;
+            } else if (itemId == R.id.nav_chat) {
+                // Already on chat, do nothing
+                return true;
+            }
+
+            return false;
+        });
     }
 }

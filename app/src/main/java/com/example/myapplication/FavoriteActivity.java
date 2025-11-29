@@ -87,13 +87,13 @@ public class FavoriteActivity extends AppCompatActivity implements ProductAdapte
                 finish();
                 return true;
 
-            /*} else if (itemId == R.id.nav_chat) {
+            } else if (itemId == R.id.nav_chat) {
                 // Navigate to ChatActivity (assuming you have one)
-                startActivity(new Intent(getApplicationContext(), ChatActivity.class));
+                startActivity(new Intent(getApplicationContext(), ChatListActivity.class));
                 finish();
                 return true;
 
-            } else if (itemId == R.id.nav_user) {
+            /*} else if (itemId == R.id.nav_user) {
                 // Navigate to ProfileActivity (assuming you have one)
                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
                 finish();

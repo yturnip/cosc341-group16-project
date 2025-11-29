@@ -150,8 +150,11 @@ public class HomeActivity extends AppCompatActivity implements ProductAdapter.On
                 startActivity(new Intent(getApplicationContext(), SellActivity.class));
                 // Don't finish HomeActivity, so the user can easily return
                 return true;
+            }  else if (itemId == R.id.nav_chat) {
+                startActivity(new Intent(getApplicationContext(), ChatListActivity.class));
+                return true;
             }
-            // Add other navigation items (chat, profile) here in the future
+        // Add other navigation items (chat, profile) here in the future
             return false;
         });
     }
