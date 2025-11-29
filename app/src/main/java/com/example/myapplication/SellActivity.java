@@ -18,6 +18,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -26,11 +27,18 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+
 public class SellActivity extends AppCompatActivity {
     ImageButton backToHome;
     MaterialCardView createVideoCard, addPhotosCard;
     RecyclerView previewsRecyclerView;
-    Button publishButton;
+    MaterialButton publishButton;
 
     private final List<Uri> selectedImageUris = new ArrayList<>();
     private ImagePreviewAdapter imagePreviewAdapter;
@@ -143,10 +151,10 @@ private void publishProduct() {
         Toast.makeText(this, "Please fill all text fields.", Toast.LENGTH_SHORT).show();
         return;
     }
-    /*if (selectedImageUris.isEmpty()) {
+    if (selectedImageUris.isEmpty()) {
         Toast.makeText(this, "Please add at least one photo or video.", Toast.LENGTH_SHORT).show();
         return;
-    }*/
+    }
     if (currentUser == null) {
         Toast.makeText(this, "Cannot publish without a logged-in user.", Toast.LENGTH_SHORT).show();
         return;
@@ -172,13 +180,16 @@ private void publishProduct() {
         // Create a unique ID for the new product (e.g., using timestamp)
         String productId = "prod" + System.currentTimeMillis();
         // Use the first image as the main imageUrl, or a placeholder
-        String imageUrl = selectedImageUris.get(0).toString();
+        //String imageUrl = selectedImageUris.get(0).toString();
+        Uri temporaryImageUri = selectedImageUris.get(0);
+        Uri permanentImageUri = copyImageToInternalStorage(temporaryImageUri, productId);
+
 
         Product newProduct = new Product(
                 productId,
                 title,
                 price,
-                "url",
+                permanentImageUri.toString(),
                 "Available", // Default status
                 currentUser.getUserId(), // Get seller ID from the current user
                 condition,
@@ -198,4 +209,30 @@ private void publishProduct() {
         Toast.makeText(this, "Please enter a valid price.", Toast.LENGTH_SHORT).show();
     }
 }
+
+    // --- ADD THIS HELPER METHOD inside your SellActivity class ---
+    private Uri copyImageToInternalStorage(Uri uri, String newFileName) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            if (inputStream == null) return null;
+
+            // Create a file in your app's private directory (e.g., /data/data/com.example.myapplication/files/prod12345.jpg)
+            File file = new File(getFilesDir(), newFileName + ".jpg");
+            try (OutputStream outputStream = new FileOutputStream(file)) {
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = inputStream.read(buf)) > 0) {
+                    outputStream.write(buf, 0, len);
+                }
+            }
+            inputStream.close();
+
+            // Return the URI of the newly created file, which is permanent
+            return Uri.fromFile(file);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
