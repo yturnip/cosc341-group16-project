@@ -17,10 +17,13 @@ tools:menu="@menu/bottom_navigation_menu">
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
     android:layout_marginBottom="16dp"
-    app:menu="@menu/bottom_navigation_menu"/>
+    app:menu="@menu/bottom_navigation_menu">
+
+</com.google.android.material.bottomnavigation.BottomNavigationView>
 
 <!-- Scrollable content area -->
-<androidx.core.widget.NestedScrollView
+
+    <androidx.core.widget.NestedScrollView
     android:id="@+id/scrollable_content"
     android:layout_width="match_parent"
     android:layout_height="684dp"
@@ -37,19 +40,23 @@ tools:menu="@menu/bottom_navigation_menu">
         android:padding="16dp">
 
         <!-- You can place your header and other content here -->
+
         <TextView
             android:id="@+id/favListingText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="442dp"
+            android:layout_height="66dp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="2dp"
+            android:background="#E0E0E0"
+            android:gravity="center"
             android:text="Chatting"
             android:textSize="24sp"
             android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewUsers"
-            android:layout_width="match_parent"
-            android:layout_height="623dp" />
+            android:layout_width="411dp"
+            android:layout_height="496dp" />
 
     </LinearLayout>
 

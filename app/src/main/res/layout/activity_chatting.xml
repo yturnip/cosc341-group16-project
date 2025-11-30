@@ -8,42 +8,58 @@
     tools:context=".ChattingActivity">
 
     <!-- Header showing the name of the user we chat with -->
+
+    <!-- Container for listing name + button -->
+
+    <!-- RecyclerView for chat messages -->
+
     <TextView
         android:id="@+id/favListingText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginTop="40dp"
+        android:background="#E0E0E0"
         android:gravity="center_vertical"
         android:padding="16dp"
         android:text="User"
         android:textSize="24sp"
         android:textStyle="bold" />
 
-    <!-- Container for listing name + button -->
-
-    <!-- RecyclerView for chat messages -->
-
     <LinearLayout
         android:id="@+id/listingsContainer"
-        android:layout_width="375dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="19dp"
-        android:layout_marginTop="111dp"
+        android:layout_marginStart="-1dp"
+        android:layout_marginTop="98dp"
+        android:background="@drawable/bg_listing_container"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="16dp">>
+
+        <ImageView
+            android:id="@+id/productImageView"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:contentDescription="Product Image"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
-            android:layout_width="227dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_width="312dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
 
             <TextView
                 android:id="@+id/textUserListingName"
-                android:layout_width="155dp"
-                android:layout_height="wrap_content"
+                android:layout_width="190dp"
+                android:layout_height="32dp"
                 android:layout_marginEnd="8dp"
                 android:text="Listings"
                 android:textSize="16sp"
@@ -52,7 +68,7 @@
             <TextView
                 android:id="@+id/textListingPrice"
                 android:layout_width="190dp"
-                android:layout_height="34dp"
+                android:layout_height="30dp"
                 android:text="TextView" />
 
             <Button
@@ -72,6 +88,7 @@
         android:layout_above="@+id/messageContainer"
         android:layout_below="@id/listingsContainer"
         android:layout_marginTop="16dp"
+        android:layout_marginRight="20dp"
         android:clipToPadding="false"
         android:padding="8dp"
         android:scrollbars="vertical" />

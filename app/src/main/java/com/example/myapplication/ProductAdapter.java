@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
@@ -53,6 +54,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product currentProduct = productList.get(position);
         holder.bind(currentProduct, context, currentUser);
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, BuyItemActivity.class);
+            intent.putExtra("product", currentProduct); // use the correct variable
+            context.startActivity(intent);
+        });
     }
 
     // Returns the total number of items in the list.

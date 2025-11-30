@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Button;
@@ -80,12 +81,16 @@ public class ChattingActivity extends AppCompatActivity {
         buttonViewListings.setOnClickListener(v -> {
             List<Product> userListings = friendUser.getListings();
 
-            // TODO: Open a new activity or dialog to show this user's products
-            // Example: pass them to ListingActivity via Intent or show in RecyclerView
-            // Intent intent = new Intent(this, ListingActivity.class);
-            // intent.putExtra("userListings", new ArrayList<>(userListings));
-            // startActivity(intent);
+            if (!userListings.isEmpty()) {
+                // Open the first product in BuyItemActivity
+                Product firstProduct = userListings.get(0);
+
+                Intent intent = new Intent(ChattingActivity.this, BuyItemActivity.class);
+                intent.putExtra("product", firstProduct); // Product must implement Serializable
+                startActivity(intent);
+            }
         });
+
 
 
 

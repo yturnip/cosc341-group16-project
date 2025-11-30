@@ -1,7 +1,9 @@
 package com.example.myapplication;
 
+import java.io.Serializable;
+
 // Create this file in its own Product.java file
-public class Product {
+public class Product implements Serializable {
     private String id;
     private String name;
     private double price;
