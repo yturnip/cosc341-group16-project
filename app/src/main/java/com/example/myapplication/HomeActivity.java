@@ -14,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HomeActivity extends AppCompatActivity implements ProductAdapter.OnFavoriteClickListener {
 
@@ -95,12 +96,9 @@ public class HomeActivity extends AppCompatActivity implements ProductAdapter.On
         productsRecycler.setLayoutManager(verticalManager);
         productsRecycler.setNestedScrollingEnabled(false);
 
-        List<Product> productList = new ArrayList<>();
-        productList.add(new Product("1", "Desk Lamp", 17.00, "", "Available", "user1", "New", "Category", "Desc", "Kelowna"));
-        productList.add(new Product("2", "Mini Fridge", 50.00, "", "Available", "user1", "New", "Category", "Desc", "Kelowna"));
-        productList.add(new Product("3", "Chair", 20.00, "", "Available", "user1", "New", "Category", "Desc", "Kelowna"));
-        productList.add(new Product("4", "Headphone", 32.00, "", "Available", "user1", "New", "Category", "Desc", "Kelowna"));
-        productList.add(new Product("5", "Camera", 100.00, "", "Available", "user1", "New", "Category", "Desc", "Kelowna"));
+        List<Product> productList = ProductRepository.getInstance().getAllProducts()
+                .stream().filter(p ->p.getStatus().equals("Available"))
+                .collect(Collectors.toList());
 
         productAdapter = new ProductAdapter(productList, this);
         productsRecycler.setAdapter(productAdapter);
