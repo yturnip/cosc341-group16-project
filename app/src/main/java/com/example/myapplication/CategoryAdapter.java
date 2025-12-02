@@ -13,10 +13,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
-    private List<Category> categoryList;
 
-    public CategoryAdapter(List<Category> categoryList){
+    public interface OnCategoryClickListener{
+        void onCategoryClick(Category category);
+    }
+
+    private List<Category> categoryList;
+    private OnCategoryClickListener listener;
+
+    public CategoryAdapter(List<Category> categoryList, OnCategoryClickListener listener){
         this.categoryList = categoryList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -32,6 +39,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
         holder.categoryName.setText(category.getName());
         holder.categoryImage.setImageResource(category.getImageId());
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null)
+                listener.onCategoryClick(category);
+        });
     }
 
     @Override

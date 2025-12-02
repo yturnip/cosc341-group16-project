@@ -78,14 +78,18 @@ public class HomeActivity extends AppCompatActivity implements ProductAdapter.On
         categoriesRecycler.setNestedScrollingEnabled(false);
 
         List<Category> categoryList = new ArrayList<>();
-        categoryList.add(new Category("Electronics", R.drawable.ic_launcher_background));
-        categoryList.add(new Category("Clothing", R.drawable.ic_launcher_background));
-        categoryList.add(new Category("Furniture", R.drawable.ic_launcher_background));
-        categoryList.add(new Category("Kitchenware", R.drawable.ic_launcher_background));
-        categoryList.add(new Category("Room Decor", R.drawable.ic_launcher_background));
-        categoryList.add(new Category("Books", R.drawable.ic_launcher_background));
+        categoryList.add(new Category("Electronics", R.drawable.electronics));
+        categoryList.add(new Category("Clothing", R.drawable.clothing));
+        categoryList.add(new Category("Furniture", R.drawable.furniture));
+        categoryList.add(new Category("Kitchenware", R.drawable.kitchenware));
+        categoryList.add(new Category("Room Decor", R.drawable.room_decor));
+        categoryList.add(new Category("Books", R.drawable.books));
 
-        categoryAdapter = new CategoryAdapter(categoryList);
+        categoryAdapter = new CategoryAdapter(categoryList, category -> {
+            Intent intent = new Intent(HomeActivity.this, ResultActivity.class);
+            intent.putExtra("category", category.getName());
+            startActivity(intent);
+        });
         categoriesRecycler.setAdapter(categoryAdapter);
     }
 
