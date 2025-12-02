@@ -79,13 +79,6 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#000"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="See All"
-            android:textColor="#5F57C6"
-            android:textStyle="bold"/>
     </LinearLayout>
 
     <!--  Categories RecyclerView  -->
