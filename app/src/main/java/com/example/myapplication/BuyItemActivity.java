@@ -45,13 +45,17 @@ public class BuyItemActivity extends AppCompatActivity {
         showProductData();
 
         buyMessageButton.setOnClickListener(v -> {
-            User sellerUser = new User(product.getSellerId(), product.getSellerId(), null); // Or get actual name
-            ChatManager.getInstance().addUser(sellerUser, product);
+            // Generate the unique ID for this specific chat thread
+            String conversationId = currentUser.getUserId() + "_" + product.getSellerId() + "_" + product.getId();
+
+            // User sellerUser = ProductRepository.getInstance().getUserById(product.getSellerId()); // Or get actual name
+            ChatManager.getInstance().getOrCreateConversation(currentUser.getUserId(), product.getSellerId(), product.getId());
 
             Intent chatIntent = new Intent(BuyItemActivity.this, ChattingActivity.class);
-            chatIntent.putExtra("currentUserId", currentUser.getUserId());
+            /*chatIntent.putExtra("currentUserId", currentUser.getUserId());
             chatIntent.putExtra("friendUserId", product.getSellerId());
-            chatIntent.putExtra("product", product);
+            chatIntent.putExtra("product", product);*/
+            chatIntent.putExtra("conversationId", conversationId);
             startActivity(chatIntent);
         });
 
@@ -82,8 +86,12 @@ public class BuyItemActivity extends AppCompatActivity {
         buyProductPrice.setText(String.format("$%.2f", product.getPrice()));
         buyDescription.setText(product.getDescription());
         meetupProduct.setText(product.getLocation());
-        sellerName.setText(product.getSellerId());
-
+        User seller = ProductRepository.getInstance().getUserById(product.getSellerId());
+        if (seller != null) {
+            sellerName.setText(seller.getName()); // Displays "Jane Doe" instead of "seller_jane_doe"
+        } else {
+            sellerName.setText("Unknown Seller");
+        }
 
         Glide.with(this)
                 .load(product.getImageUrl())
