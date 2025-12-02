@@ -1,8 +1,10 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -32,89 +34,71 @@ public class ChattingActivity extends AppCompatActivity {
     private List<Message> chatMessages;
     private Handler handler = new Handler(); // Handler for delayed reply
     private Product product;
+
+    private String conversationId;
+    private Conversation conversation;
+    private Button buttonLeaveReview;
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatting);
 
-        // UI references
+        // --- 1. Initialize UI Views ---
         recyclerView = findViewById(R.id.favoritesRecyclerView);
         editTextMessage = findViewById(R.id.editTextMessage);
         buttonSend = findViewById(R.id.buttonSend);
         searchBackButton = findViewById(R.id.searchBackButton3);
-
-        searchBackButton.setOnClickListener(v -> finish());
         TextView headerText = findViewById(R.id.favListingText);
-
-        // Get users from intent (or default for testing)
-        String currentUserId = getIntent().getStringExtra("currentUserId");
-        String friendUserId = getIntent().getStringExtra("friendUserId");
-//        if (product == null) {
-//            product = ChatManager.getInstance().getLastProductForUser(friendUserId);
-//        }
-        String friendUserName = getIntent().getStringExtra("friendUserName");
-        product = (Product) getIntent().getSerializableExtra("product");
-
-        if (currentUserId == null) currentUserId = "user1";
-        if (friendUserId == null) friendUserId = "user2";
-        if (friendUserName == null) friendUserName = "Unknown";
-
-        currentUser = new User(currentUserId, "Me", null);
-        friendUser = new User(friendUserId, friendUserName, null);
-
-        // Set header to the name of the user
-        headerText.setText(friendUser.getName());
-
         TextView textUserListingName = findViewById(R.id.textUserListingName);
         TextView textListingPrice = findViewById(R.id.textListingPrice);
         ImageView productImageView = findViewById(R.id.productImageView);
-
-        if (friendUser.getName().equalsIgnoreCase("Alice")) {
-            friendUser.addListing(new Product("p1", "Book", 10, "url1", "Available", friendUser.getUserId(), "Used", "Books", "Good book", "City"));
-        } else if (friendUser.getName().equalsIgnoreCase("Bob")) {
-            friendUser.addListing(new Product("p3", "Notebook", 5, "url3", "Available", friendUser.getUserId(), "Used", "Stationery", "Notebook 100 pages", "City"));
-        } else if (friendUser.getName().equalsIgnoreCase("Charlie")) {
-            friendUser.addListing(new Product("p4", "Hoodie", 55, "url4", "Available", friendUser.getUserId(), "Used", "Clothing", "Mint condition", "Campus"));
-        }
-
-        // Update the name dynamically based on the user
-        if (friendUser.getListings().size() == 1) {
-            textUserListingName.setText(friendUser.getListings().get(0).getName());
-            textListingPrice.setText(String.valueOf(friendUser.getListings().get(0).getPrice()) + " $");
-        } else {
-            textUserListingName.setText("No Listings");
-        }
-
-
-        // Initialize message list
-        chatMessages = new ArrayList<>();
-
         Button buttonViewListings = findViewById(R.id.buttonViewListings);
-        buttonViewListings.setOnClickListener(v -> {
-            List<Product> userListings = friendUser.getListings();
+        buttonLeaveReview = findViewById(R.id.buttonLeaveReview);
 
-            if (!userListings.isEmpty()) {
-                // Open the first product in BuyItemActivity
-                Product firstProduct = userListings.get(0);
-
-                Intent intent = new Intent(ChattingActivity.this, BuyItemActivity.class);
-                intent.putExtra("product", firstProduct); // Product must implement Serializable
-                startActivity(intent);
-            }
-        });
-
-
-
-        if (product == null && friendUserId != null) {
-            product = ChatManager.getInstance().getLastProductForUser(friendUserId);
+        // --- 2. Load Core Data (Users and Product) ---
+        // Always get the single, true current user from the repository.
+        currentUser = ProductRepository.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            // Can't continue without a current user
+            finish();
+            return;
         }
+
+        conversationId = getIntent().getStringExtra("conversationId");
+        if (conversationId == null) {
+            finish(); // Can't work without a conversation ID
+            return;
+        }
+
+        conversation = ChatManager.getInstance().getConversationById(conversationId);
+        if (conversation == null) {
+            // No conversation found with that id — we can't chat
+            finish();
+            return;
+        }
+
+        product = ProductRepository.getInstance().getProductById(conversation.getProductId());
+
+        // Determine the friendUser (the other party in the conversation)
+        String buyerId = conversation.getBuyerId();
+        String sellerId = conversation.getSellerId();
+
+        if (currentUser.getUserId().equals(buyerId)) {
+            friendUser = ProductRepository.getInstance().getUserById(sellerId);
+        } else if (currentUser.getUserId().equals(sellerId)) {
+            friendUser = ProductRepository.getInstance().getUserById(buyerId);
+        } else {
+            // currentUser is not part of this conversation; choose seller as friend by default
+            friendUser = ProductRepository.getInstance().getUserById(sellerId);
+        }
+
+        // --- 3. Setup UI based on Data ---
+        headerText.setText(friendUser != null && friendUser.getName() != null ? friendUser.getName() : "Chat");
 
         if (product != null) {
-            // Use the seller name from product
-            String sellerName = product.getSellerId(); // Or a proper name if you have it
-            headerText.setText(sellerName);
-
-            // Set the product info
+            // A product is associated with this chat, so display its info in the banner.
             textUserListingName.setText(product.getName());
             textListingPrice.setText(String.format("$%.2f", product.getPrice()));
 
@@ -122,118 +106,97 @@ public class ChattingActivity extends AppCompatActivity {
                     .load(product.getImageUrl())
                     .placeholder(R.drawable.ic_launcher_background)
                     .into(productImageView);
+
+            if ("Sold".equalsIgnoreCase(product.getStatus())) {
+                // --- Product is SOLD ---
+                // 1. Disable chat input
+                editTextMessage.setEnabled(false);
+                editTextMessage.setHint("This item has been sold.");
+                buttonSend.setEnabled(false);
+                buttonSend.setAlpha(0.5f); // Visually indicate it's disabled
+
+                // 2. Swap the buttons
+                buttonViewListings.setVisibility(View.GONE);
+                buttonLeaveReview.setVisibility(View.VISIBLE);
+
+            } else {
+                // --- Product is Available or Pending ---
+                // 1. Ensure chat is enabled
+                editTextMessage.setEnabled(true);
+                editTextMessage.setHint("Type a message");
+                buttonSend.setEnabled(true);
+                buttonSend.setAlpha(1.0f);
+
+                // 2. Show the "View Item" button
+                buttonViewListings.setVisibility(View.VISIBLE);
+                buttonLeaveReview.setVisibility(View.GONE);
+            }
+
         } else {
-            // Optional: Handle case where there’s no product
-            headerText.setText(friendUser.getName());
-            textUserListingName.setText("");
-            textListingPrice.setText("");
-            buttonViewListings.setEnabled(false);
-            buttonViewListings.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
-            buttonViewListings.setText("Product Sold");
+                // No product context for this chat. Show a "deal done" or disabled state.
+                editTextMessage.setEnabled(false);
+                buttonSend.setEnabled(false);
+                buttonViewListings.setVisibility(View.GONE);
+                buttonLeaveReview.setVisibility(View.GONE);
+                textUserListingName.setText("General Chat");
+                textListingPrice.setText("");
+                // You could set a generic "deal done" icon here if you have one.
+                productImageView.setImageResource(R.drawable.ic_launcher_background);
+
+                buttonViewListings.setEnabled(false);
+                buttonViewListings.setText("No Product");
         }
 
-        // PRESET MESSAGES
-        switch (friendUserName.toLowerCase()) {
-            case "alice":
-                chatMessages.add(new Message(friendUserId, "Hello! How are you?", System.currentTimeMillis() - 60000));
-                chatMessages.add(new Message(currentUser.getUserId(), "Hi Alice! I'm good, thanks.", System.currentTimeMillis() - 55000));
-                chatMessages.add(new Message(friendUserId, "Want to meet tomorrow?", System.currentTimeMillis() - 50000));
-                chatMessages.add(new Message(currentUser.getUserId(), "I'm down", System.currentTimeMillis() - 55000));
-                break;
-            case "bob":
-                chatMessages.add(new Message(friendUserId, "Hey! Are you still interested in the deal?", System.currentTimeMillis() - 60000));
-                chatMessages.add(new Message(currentUser.getUserId(), "Yes, do you want to meet in Pritchard at 8 am?", System.currentTimeMillis() - 55000));
-                chatMessages.add(new Message(friendUserId, "Alrighty", System.currentTimeMillis() - 50000));
-                break;
-            case "charlie":
-                chatMessages.add(new Message(friendUserId, "Hi!", System.currentTimeMillis() - 60000));
-                chatMessages.add(new Message(currentUser.getUserId(), "Hi Charlie, How are you?", System.currentTimeMillis() - 55000));
-                chatMessages.add(new Message(friendUserId, "Pretty good, thanks!", System.currentTimeMillis() - 50000));
-                chatMessages.add(new Message(friendUserId, "Where do you wanna meet?", System.currentTimeMillis() - 50000));
-                chatMessages.add(new Message(currentUser.getUserId(), "Library, 10 pm?", System.currentTimeMillis() - 55000));
-                chatMessages.add(new Message(friendUserId, "For sure", System.currentTimeMillis() - 50000));
-                break;
-            default:
-                // No preset messages for new users
-                break;
+        // --- 4. Load Chat History ---
+        chatMessages = conversation.getMessages();
+        if (chatMessages == null) {
+            chatMessages = new ArrayList<>();
         }
 
-
-        // --- Now use the product data to populate the UI ---
-        // Get friend user ID and product from Intent
-//        friendUserId = getIntent().getStringExtra("friendUserId");
-//        product = (Product) getIntent().getSerializableExtra("product");
-
-        // If Intent didn't provide product, fetch from ChatManager
-
-
-
-        // Now update UI if we have product info
-
-
-        List<Message> previousMessages = ChatManager.getInstance().getMessagesForUser(friendUserId);
-        if (previousMessages != null) {
-            chatMessages.addAll(previousMessages);
+        // --- 5. Setup Interactive Components ---
+        // The RecyclerView and Adapter
+        chatAdapter = new ChattingAdapter(chatMessages, currentUser.getUserId());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(chatAdapter);
+        if (!chatMessages.isEmpty()) {
+            recyclerView.scrollToPosition(chatMessages.size() - 1);
         }
 
+        // Click Listeners
+        searchBackButton.setOnClickListener(v -> finish());
 
-        // The rest of your chat logic can remain largely the same.
-        // You can remove all the hardcoded messages for "Alice", "Bob", and "Charlie".
-//        chatMessages = new ArrayList<>();
-
-//        Button buttonViewListings = findViewById(R.id.buttonViewListings);
         buttonViewListings.setOnClickListener(v -> {
-            // Check if the product object exists before trying ProcessBuilder.Redirect.to use it.
+            // This single listener now correctly handles the "View" button.
             if (product != null) {
-                // Create an intent to go back to the BuyItemActivity.
                 Intent intent = new Intent(ChattingActivity.this, BuyItemActivity.class);
-
-                // Pass the *same product* back to the activity.
                 intent.putExtra("product", product);
-
-                // Start the activity.
                 startActivity(intent);
             }
         });
 
-        // Setup RecyclerView
-        chatAdapter = new ChattingAdapter(chatMessages, currentUser.getUserId());
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(chatAdapter);
-        recyclerView.scrollToPosition(chatMessages.size() - 1);
-
-        // Send button click
-        AtomicBoolean charlieHasReplied = new AtomicBoolean(false);
+        // TO BE ADDED: Review button listener
+        buttonLeaveReview.setOnClickListener(v -> {
+            Intent intent = new Intent(ChattingActivity.this, ReviewActivity.class);
+            // Pass the seller's ID so the review activity knows who is being reviewed
+            intent.putExtra("sellerId", friendUser.getUserId());
+            startActivity(intent);
+        });
 
         buttonSend.setOnClickListener(v -> {
             String messageText = editTextMessage.getText().toString().trim();
             if (!messageText.isEmpty()) {
-                // 1️⃣ Add current user's message
                 Message myMessage = new Message(currentUser.getUserId(), messageText, System.currentTimeMillis());
-                chatMessages.add(myMessage);
+                // Save the message to the central manager
+                ChatManager.getInstance().addMessageToConversation(conversationId, myMessage);
 
-                ChatManager.getInstance().addMessageForUser(friendUser.getUserId(), myMessage); // <-- save
                 chatAdapter.notifyItemInserted(chatMessages.size() - 1);
                 recyclerView.scrollToPosition(chatMessages.size() - 1);
                 editTextMessage.setText("");
 
-                // 2️⃣ Generate fake reply
+                // Generate a fake reply
                 generateFakeReply(messageText);
             }
         });
-    }
-    private void sendCharlieRepliesSequentially(String[] replies, int index) {
-        if (index >= replies.length) return; // stop when all replies sent
-
-        handler.postDelayed(() -> {
-            Message reply = new Message(friendUser.getUserId(), replies[index], System.currentTimeMillis());
-            chatMessages.add(reply);
-            chatAdapter.notifyItemInserted(chatMessages.size() - 1);
-            recyclerView.scrollToPosition(chatMessages.size() - 1);
-
-            // Call the next reply
-            sendCharlieRepliesSequentially(replies, index + 1);
-        }, 2000); // 2-second delay for each message
     }
 
     private void generateFakeReply(String userMessage) {
@@ -257,8 +220,7 @@ public class ChattingActivity extends AppCompatActivity {
 
             // Create and display the fake reply message
             Message replyMessage = new Message(friendUser.getUserId(), replyText, System.currentTimeMillis());
-            chatMessages.add(replyMessage);
-            ChatManager.getInstance().addMessageForUser(friendUser.getUserId(), replyMessage);
+            ChatManager.getInstance().addMessageToConversation(conversationId, replyMessage);
             chatAdapter.notifyItemInserted(chatMessages.size() - 1);
             recyclerView.scrollToPosition(chatMessages.size() - 1);
 

@@ -3,6 +3,9 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,47 +17,39 @@ import java.util.List;
 public class ChatListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private ChatUserAdapter chatUserAdapter;
-    private List<User> users;
-    private User currentUser;
+    // The adapter is now a ConversationListAdapter
+    private ConversationListAdapter conversationAdapter;
+    private List<Conversation> conversations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_list);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            return insets;
+        });
 
         recyclerView = findViewById(R.id.recyclerViewUsers);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Example current user
-        currentUser = new User("user1", "Me", null);
+        // Get all conversations from the manager.
+        conversations = ChatManager.getInstance().getAllConversations();
 
-        // Example friend users
-        users = ChatManager.getInstance().getChatUsers();
-
-        ChatManager.getInstance().addUser(new User("user22", "Alice", null), null);
-        ChatManager.getInstance().addUser(new User("user33", "Bob", null), null);
-        ChatManager.getInstance().addUser(new User("user44", "Charlie", null), null);
-
-
-        // Initialize adapter
-        chatUserAdapter = new ChatUserAdapter(users, user -> {
-            // On user click, go to ChattingActivity
+        // Initialize the new adapter with the list of conversations.
+        conversationAdapter = new ConversationListAdapter(conversations, conversation -> {
+            // This is the click listener lambda.
+            // When a conversation is clicked, open ChattingActivity.
             Intent intent = new Intent(ChatListActivity.this, ChattingActivity.class);
-            intent.putExtra("currentUserId", currentUser.getUserId());
-            intent.putExtra("friendUserId", user.getUserId());
-            intent.putExtra("friendUserName", user.getName());
+            // Pass the unique ID of the conversation that was clicked.
+            intent.putExtra("conversationId", conversation.getConversationId());
             startActivity(intent);
         });
 
-        recyclerView.setAdapter(chatUserAdapter);
+        // Set the new adapter on the RecyclerView.
+        recyclerView.setAdapter(conversationAdapter);
         setupBottomNavigation();
-    }
-
-    private void addNewUser(String userId, String name) {
-        User newUser = new User(userId, name, null);
-        users.add(newUser);
-        chatUserAdapter.notifyItemInserted(users.size() - 1);
     }
 
     private void setupBottomNavigation() {
