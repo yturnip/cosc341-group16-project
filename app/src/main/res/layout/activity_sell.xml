@@ -316,7 +316,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Books" />
-
+                    <!--
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipSportsEquipments"
                         style="@style/Widget.App.Chip.Choice"
@@ -351,7 +351,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Others" />
-                    <!-- Add more chips as needed -->
+                    Add more chips as needed -->
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>
 
