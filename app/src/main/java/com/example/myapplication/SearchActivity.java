@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.EditText;
@@ -65,7 +66,8 @@ public class SearchActivity extends AppCompatActivity implements RecentSearchAda
         });
 
         filterIcon.setOnClickListener(v -> {
-            startActivity(new android.content.Intent(SearchActivity.this, FilterActivity.class));
+            FilterActivity sheet = new FilterActivity();
+            sheet.show(getSupportFragmentManager(), "filterSheet");
         });
     }
 
