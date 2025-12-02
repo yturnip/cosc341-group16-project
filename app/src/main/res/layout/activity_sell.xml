@@ -332,6 +332,13 @@
                         android:text="Art Supplies" />
 
                     <com.google.android.material.chip.Chip
+                        android:id="@+id/chipSchoolSupplies"
+                        style="@style/Widget.App.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="School Supplies" />
+
+                    <com.google.android.material.chip.Chip
                         android:id="@+id/chipTickets"
                         style="@style/Widget.App.Chip.Choice"
                         android:layout_width="wrap_content"

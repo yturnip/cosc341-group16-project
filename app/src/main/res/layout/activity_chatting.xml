@@ -5,7 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ChattingActivity">
+    tools:context=".ChattingActivity"
+    android:background="#FFFFFF">
 
     <!-- Header showing the name of the user we chat with -->
 
@@ -87,11 +88,22 @@
                 android:layout_height="30dp"
                 android:text="TextView" />
 
+            <!-- This is the existing button for active chats -->
             <Button
                 android:id="@+id/buttonViewListings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="View Listings" />
+
+            <!-- This is the existing button for sold chats -->
+            <Button
+                android:id="@+id/buttonLeaveReview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Leave a Review"
+                android:visibility="gone"
+                app:backgroundTint="@color/purple_500" />
         </LinearLayout>
 
 

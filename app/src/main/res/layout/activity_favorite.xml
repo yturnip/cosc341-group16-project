@@ -5,7 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FavoriteActivity"> <!-- Changed context for clarity -->
+    tools:context=".FavoriteActivity"
+    android:background="#FFFFFF"> <!-- Changed context for clarity -->
 
     <!-- Scrollable content area -->
     <androidx.core.widget.NestedScrollView

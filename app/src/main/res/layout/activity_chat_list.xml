@@ -1,65 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:id="@+id/main"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-tools:context=".ChattingActivity"
-tools:menu="@menu/bottom_navigation_menu">
-
-<!-- Bottom Navigation "Island" -->
-<com.google.android.material.bottomnavigation.BottomNavigationView
-    android:id="@+id/bottom_navigation"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginBottom="16dp"
-    app:menu="@menu/bottom_navigation_menu">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".ChatListActivity">
 
-</com.google.android.material.bottomnavigation.BottomNavigationView>
-
-<!-- Scrollable content area -->
-
-    <androidx.core.widget.NestedScrollView
-    android:id="@+id/scrollable_content"
-    android:layout_width="match_parent"
-    android:layout_height="684dp"
-    android:layout_above="@id/bottom_navigation"
-    android:layout_alignParentTop="true"
-    android:layout_marginTop="40dp"
-    android:layout_marginBottom="-89dp">
-
-    <!-- This is where your page content (like the header from before) will go -->
+    <!-- Header Section -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/header"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="#E0E0E0"
+        android:gravity="center"
         android:orientation="vertical"
-        android:padding="16dp">
-
-        <!-- You can place your header and other content here -->
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/favListingText"
-            android:layout_width="442dp"
-            android:layout_height="66dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="2dp"
-            android:background="#E0E0E0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center"
+            android:padding="16dp"
             android:text="Chatting"
             android:textSize="24sp"
             android:textStyle="bold" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewUsers"
-            android:layout_width="411dp"
-            android:layout_height="496dp" />
-
     </LinearLayout>
 
-</androidx.core.widget.NestedScrollView>
+    <!-- RecyclerView for the list of conversations -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewUsers"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        tools:listitem="@layout/item_conversation" />
 
-</RelativeLayout>
+    <!-- Bottom Navigation, constrained to the bottom -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_navigation_menu" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
