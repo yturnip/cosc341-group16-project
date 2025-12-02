@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -43,20 +44,29 @@ public class SearchActivity extends AppCompatActivity implements RecentSearchAda
 
         loadRecentSearches();
 
-        recentAdapter = new RecentSearchAdapter(recentList, this);
+        recentAdapter = new RecentSearchAdapter(SearchActivity.this, recentList,this);
 
         recentRecycler.setLayoutManager(new LinearLayoutManager(this));
         recentRecycler.setAdapter(recentAdapter);
 
         searchInput.setOnEditorActionListener((v, actionId, event) ->{
-            String text = searchInput.getText().toString().trim();
+            if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER){
+                String text = searchInput.getText().toString().trim();
 
-            if (!text.isEmpty()){
-                addRecent(text);
-                searchInput.setText("");
+                if (!text.isEmpty()){
+                    addRecent(text);
+
+                    Intent intent = new Intent(SearchActivity.this, ResultActivity.class);
+                    intent.putExtra("keyword", text);
+                    startActivity(intent);
+
+                    searchInput.setText("");
+                }
+
+                return true;
             }
 
-            return true;
+            return false;
         });
 
         clearAll.setOnClickListener(v -> {

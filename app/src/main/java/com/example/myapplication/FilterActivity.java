@@ -76,6 +76,12 @@ public class FilterActivity extends BottomSheetDialogFragment {
             float minPrice = priceSlider.getValues().get(0);
             float maxPrice = priceSlider.getValues().get(1);
 
+            Intent intent = new Intent(getContext(), ResultActivity.class);
+            intent.putExtra("category", selectedCategory);
+            intent.putExtra("minPrice", minPrice);
+            intent.putExtra("maxPrice", maxPrice);
+
+            startActivity(intent);
             dismiss();
         });
     }

@@ -17,6 +17,9 @@
             android:name=".ReviewActivity"
             android:exported="false" />
         <activity
+            android:name=".ResultActivity"
+            android:exported="false" />
+        <activity
             android:name=".BuyItemActivity"
             android:exported="false" />
         <activity
