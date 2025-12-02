@@ -140,7 +140,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:gravity="center"
-                            android:text="Add photos"
+                            android:text="Add media\n(10 items max.)"
                             android:textColor="@android:color/black" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -302,6 +302,48 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Kitchenware" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipRoomDecor"
+                        style="@style/Widget.App.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Room Decor" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipBooks"
+                        style="@style/Widget.App.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Books" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipSportsEquipments"
+                        style="@style/Widget.App.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sports Equipments" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipArtSupplies"
+                        style="@style/Widget.App.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Art Supplies" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipTickets"
+                        style="@style/Widget.App.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tickets" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipOthers"
+                        style="@style/Widget.App.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Others" />
                     <!-- Add more chips as needed -->
                 </com.google.android.material.chip.ChipGroup>
             </HorizontalScrollView>

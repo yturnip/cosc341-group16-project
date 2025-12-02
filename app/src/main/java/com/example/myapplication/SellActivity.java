@@ -35,6 +35,7 @@ import java.io.OutputStream;
 
 
 public class SellActivity extends AppCompatActivity {
+    private static final int MAX_PHOTOS = 10;
     ImageButton backToHome;
     MaterialCardView createVideoCard, addPhotosCard;
     RecyclerView previewsRecyclerView;
@@ -51,14 +52,23 @@ public class SellActivity extends AppCompatActivity {
                     if (result.getData().getClipData() != null) {
                         int count = result.getData().getClipData().getItemCount();
                         for (int i = 0; i < count; i++) {
-                            Uri imageUri = result.getData().getClipData().getItemAt(i).getUri();
-                            selectedImageUris.add(imageUri);
+                            if (selectedImageUris.size() < MAX_PHOTOS) {
+                                Uri imageUri = result.getData().getClipData().getItemAt(i).getUri();
+                                selectedImageUris.add(imageUri);
+                            } else {
+                                Toast.makeText(this, "You can only select up to 10 photos.", Toast.LENGTH_SHORT).show();
+                                break; // Stop adding if the limit is reached
+                            }
                         }
                     }
                     // This handles single image selection
                     else if (result.getData().getData() != null) {
-                        Uri imageUri = result.getData().getData();
-                        selectedImageUris.add(imageUri);
+                        if (selectedImageUris.size() < MAX_PHOTOS) {
+                            Uri imageUri = result.getData().getData();
+                            selectedImageUris.add(imageUri);
+                        } else {
+                            Toast.makeText(this, "You have reached the 10 photo limit.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                     // Update the adapter and make the RecyclerView visible
                     imagePreviewAdapter.notifyDataSetChanged();
@@ -107,16 +117,20 @@ public class SellActivity extends AppCompatActivity {
         });
 
         addPhotosCard.setOnClickListener(v -> {
-            // Create an intent to open the image gallery
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true); // Allow multiple selections
-            intent.setType("image/* video/*"); // Allow both images and videos
+            if (selectedImageUris.size() >= MAX_PHOTOS) {
+                Toast.makeText(this, "You have already selected the maximum of 10 photos.", Toast.LENGTH_LONG).show();
+            } else {
+                // Create an intent to open the image gallery
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true); // Allow multiple selections
+                intent.setType("image/* video/*"); // Allow both images and videos
 
-            // You can specify mimetypes to be more specific
-            // String[] mimeTypes = {"image/jpeg", "image/png", "video/mp4"};
-            // intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+                // You can specify mimetypes to be more specific
+                // String[] mimeTypes = {"image/jpeg", "image/png", "video/mp4"};
+                // intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
 
-            pickMultipleImagesLauncher.launch(intent);
+                pickMultipleImagesLauncher.launch(intent);
+            }
         });
 
         createVideoCard.setOnClickListener(v -> {

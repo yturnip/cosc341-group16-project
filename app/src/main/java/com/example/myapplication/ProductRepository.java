@@ -64,16 +64,29 @@ public class ProductRepository {
         // Create a sample user
         currentUser = new User("user123", "Alex", "url_to_profile_pic");
 
+        String textbookUrl = getImageUrl("Used Textbook");
+        String lampUrl = getImageUrl("Desk Lamp");
+        String fridgeUrl = getImageUrl("Mini Fridge");
+        String chairUrl = getImageUrl("Gaming Chair");
+
         // Create sample products
-        allProducts.add(new Product("prod1", "Used Textbook", 25.00, "url", "Available", "sellerA", "Used", "School Stuff", "Good", "Kelowna"));
-        allProducts.add(new Product("prod2", "Desk Lamp", 15.00, "url", "Sold", "sellerB", "Used", "School Stuff", "Good", "Kelowna"));
-        allProducts.add(new Product("prod3", "Mini Fridge", 50.00, "url", "Available", "sellerC", "Used", "School Stuff", "Good", "Kelowna"));
-        allProducts.add(new Product("prod4", "Gaming Chair", 120.00, "url", "Pending", "sellerA", "Used", "School Stuff", "Good", "Kelowna"));
+        allProducts.add(new Product("prod1", "Used Textbook", 25.00, textbookUrl, "Available", "sellerA", "Used", "School Stuff", "Good", "Kelowna"));
+        allProducts.add(new Product("prod2", "Desk Lamp", 15.00, lampUrl, "Sold", "sellerB", "Used", "School Stuff", "Good", "Kelowna"));
+        allProducts.add(new Product("prod3", "Mini Fridge", 50.00, fridgeUrl, "Available", "sellerC", "Used", "School Stuff", "Good", "Kelowna"));
+        allProducts.add(new Product("prod4", "Gaming Chair", 120.00, chairUrl, "Pending", "sellerA", "Used", "School Stuff", "Good", "Kelowna"));
 
         // Make the user like some of the items
         currentUser.addFavorite("prod2"); // User likes the sold desk lamp
         currentUser.addFavorite("prod3"); // User likes the available mini fridge
         currentUser.addFavorite("prod4"); // User likes the gaming chair
+    }
+
+    private String getImageUrl(String imageName) {
+        // Correctly convert "Used Textbook" to "used_textbook"
+        String resourceName = imageName.toLowerCase().replace(" ", "_");
+
+        // The URI format Glide understands for local drawables
+        return "android.resource://com.example.myapplication/drawable/" + resourceName;
     }
 }
 

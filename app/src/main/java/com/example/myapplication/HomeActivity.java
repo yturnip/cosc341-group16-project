@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -14,6 +15,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HomeActivity extends AppCompatActivity implements ProductAdapter.OnFavoriteClickListener {
 
@@ -25,13 +27,18 @@ public class HomeActivity extends AppCompatActivity implements ProductAdapter.On
 
     private ProductRepository repository;
     private User currentUser;
-    private RecyclerView productsRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // EdgeToEdge.enable(this); // This can sometimes interfere with padding, let's keep it simple for now.
         setContentView(R.layout.activity_home);
+
+        EditText searchBar = findViewById(R.id.searchBar);
+        searchBar.setFocusable(false);
+        searchBar.setOnClickListener(v -> {
+            startActivity(new Intent(HomeActivity.this, SearchActivity.class));
+        });
 
 
         // This listener handles padding for system bars (like status bar), which is good practice.
@@ -41,8 +48,8 @@ public class HomeActivity extends AppCompatActivity implements ProductAdapter.On
             return insets;
         });
 
-        setupCategoriesRecycler();
-        setupProductsRecycler();
+        //setupCategoriesRecycler();
+        //setupProductsRecycler();
 
 
         /// //////
@@ -51,21 +58,15 @@ public class HomeActivity extends AppCompatActivity implements ProductAdapter.On
         // 1. Initialize Repository and get data
         repository = ProductRepository.getInstance();
         currentUser = repository.getCurrentUser();
-        List<Product> allProducts = repository.getAllProducts();
 
         // 2. Setup the main products RecyclerView
         // Your activity_home.xml has a RecyclerView with the ID 'productsRecyclerView'
-        productsRecyclerView = findViewById(R.id.productsRecyclerView);
-
-        // The adapter needs 'this' as the listener because this activity implements OnFavoriteClickListener
-        productAdapter = new ProductAdapter(allProducts, this);
-
-        // Use a GridLayoutManager to show products in a 2-column grid, which is common for e-commerce apps
-        productsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        productsRecyclerView.setAdapter(productAdapter);
+        productsRecycler = findViewById(R.id.productsRecyclerView);
 
         // 3. Setup Bottom Navigation
         setupBottomNavigation();
+        setupCategoriesRecycler();
+        setupProductsRecycler();
     }
 
     private void setupCategoriesRecycler(){
@@ -89,21 +90,19 @@ public class HomeActivity extends AppCompatActivity implements ProductAdapter.On
     }
 
     private void setupProductsRecycler(){
-        productsRecycler = findViewById(R.id.productsRecyclerView);
+        List<Product> productList = ProductRepository.getInstance().getAllProducts()
+                .stream().filter(p ->p.getStatus().equals("Available"))
+                .collect(Collectors.toList());
 
-        LinearLayoutManager verticalManager = new LinearLayoutManager(this);
-        productsRecycler.setLayoutManager(verticalManager);
-        productsRecycler.setNestedScrollingEnabled(false);
-
-        List<Product> productList = new ArrayList<>();
-        productList.add(new Product("1", "Desk Lamp", 17.00, "", "Available", "user1", "New", "Category", "Desc", "Kelowna"));
-        productList.add(new Product("2", "Mini Fridge", 50.00, "", "Available", "user1", "New", "Category", "Desc", "Kelowna"));
-        productList.add(new Product("3", "Chair", 20.00, "", "Available", "user1", "New", "Category", "Desc", "Kelowna"));
-        productList.add(new Product("4", "Headphone", 32.00, "", "Available", "user1", "New", "Category", "Desc", "Kelowna"));
-        productList.add(new Product("5", "Camera", 100.00, "", "Available", "user1", "New", "Category", "Desc", "Kelowna"));
-
-        productAdapter = new ProductAdapter(productList, this);
-        productsRecycler.setAdapter(productAdapter);
+        if (productAdapter == null) {
+            LinearLayoutManager verticalManager = new LinearLayoutManager(this);
+            productsRecycler.setLayoutManager(verticalManager);
+            productsRecycler.setNestedScrollingEnabled(false);
+            productAdapter = new ProductAdapter(productList, this);
+            productsRecycler.setAdapter(productAdapter);
+        } else {
+            productAdapter.updateList(productList);
+        }
     }
 
     @Override
@@ -111,24 +110,9 @@ public class HomeActivity extends AppCompatActivity implements ProductAdapter.On
         super.onResume();
         // Load (or reload) the data here
         setupBottomNavigation();
-        loadAndDisplayProducts();
+        setupCategoriesRecycler();
+        setupProductsRecycler();
     }
-
-    private void loadAndDisplayProducts() {
-        // Get the latest list of products from the repository
-        List<Product> allProducts = repository.getAllProducts();
-
-        // If the adapter hasn't been created yet, create and set it
-        if (productAdapter == null) {
-            productAdapter = new ProductAdapter(allProducts, this);
-            productsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            productsRecyclerView.setAdapter(productAdapter);
-        } else {
-            // If the adapter already exists, just update its list
-            productAdapter.updateList(allProducts);
-        }
-    }
-
     private void setupBottomNavigation() {
         BottomNavigationView bnv = findViewById(R.id.bottom_navigation);
 

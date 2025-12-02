@@ -101,7 +101,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/item_category"/>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollArea"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -135,7 +135,7 @@
                     android:overScrollMode="never"
                     tools:listitem="@layout/item_product"/>
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
