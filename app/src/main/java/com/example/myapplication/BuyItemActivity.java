@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,7 +13,7 @@ import com.bumptech.glide.Glide;
 
 public class BuyItemActivity extends AppCompatActivity {
 
-    private ImageView buyProductImage;
+    private ImageView buyProductImage, searchBackButton;
     private TextView buyProductName, buyProductPrice, buyDescription, meetupProduct, sellerName;
     private Button buyMessageButton, buyFavoriteButton;
 
@@ -32,8 +33,10 @@ public class BuyItemActivity extends AppCompatActivity {
         buyDescription = findViewById(R.id.buyDescription);
         buyMessageButton = findViewById(R.id.buyMessageButton);
         meetupProduct = findViewById(R.id.MeetupProduct);
-        buyFavoriteButton = findViewById(R.id.buyFavoriteButton);
         sellerName = findViewById(R.id.sellerName);
+        searchBackButton = findViewById(R.id.searchBackButton2);
+
+        searchBackButton.setOnClickListener(v -> finish());
 
         // Get product sent from Adapter click
         Intent intent = getIntent();
@@ -42,6 +45,9 @@ public class BuyItemActivity extends AppCompatActivity {
         showProductData();
 
         buyMessageButton.setOnClickListener(v -> {
+            User sellerUser = new User(product.getSellerId(), product.getSellerId(), null); // Or get actual name
+            ChatManager.getInstance().addUser(sellerUser, product);
+
             Intent chatIntent = new Intent(BuyItemActivity.this, ChattingActivity.class);
             chatIntent.putExtra("currentUserId", currentUser.getUserId());
             chatIntent.putExtra("friendUserId", product.getSellerId());
@@ -49,13 +55,26 @@ public class BuyItemActivity extends AppCompatActivity {
             startActivity(chatIntent);
         });
 
+        ImageButton buyFavoriteButton = findViewById(R.id.buyFavoriteButton);
+
+        if (currentUser.isFavorite(product.getId())) {
+            buyFavoriteButton.setImageResource(R.drawable.ic_heart_on);
+        } else {
+            buyFavoriteButton.setImageResource(R.drawable.love_icon);
+        }
+
         buyFavoriteButton.setOnClickListener(v -> {
-            if (currentUser.isFavorite(product.getId())) {
+            boolean isFav = currentUser.isFavorite(product.getId());
+
+            if (isFav) {
                 currentUser.removeFavorite(product.getId());
+                buyFavoriteButton.setImageResource(R.drawable.love_icon);
             } else {
                 currentUser.addFavorite(product.getId());
+                buyFavoriteButton.setImageResource(R.drawable.ic_heart_on);
             }
         });
+
     }
 
     private void showProductData() {

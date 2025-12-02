@@ -30,10 +30,12 @@ public class ChatListActivity extends AppCompatActivity {
         currentUser = new User("user1", "Me", null);
 
         // Example friend users
-        users = new ArrayList<>();
-        users.add(new User("user2", "Alice", null));
-        users.add(new User("user3", "Bob", null));
-        users.add(new User("user4", "Charlie", null));
+        users = ChatManager.getInstance().getChatUsers();
+
+        ChatManager.getInstance().addUser(new User("user22", "Alice", null), null);
+        ChatManager.getInstance().addUser(new User("user33", "Bob", null), null);
+        ChatManager.getInstance().addUser(new User("user44", "Charlie", null), null);
+
 
         // Initialize adapter
         chatUserAdapter = new ChatUserAdapter(users, user -> {
@@ -47,6 +49,12 @@ public class ChatListActivity extends AppCompatActivity {
 
         recyclerView.setAdapter(chatUserAdapter);
         setupBottomNavigation();
+    }
+
+    private void addNewUser(String userId, String name) {
+        User newUser = new User(userId, name, null);
+        users.add(newUser);
+        chatUserAdapter.notifyItemInserted(users.size() - 1);
     }
 
     private void setupBottomNavigation() {

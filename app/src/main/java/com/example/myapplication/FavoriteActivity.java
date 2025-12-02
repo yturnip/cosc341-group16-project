@@ -50,13 +50,6 @@ public class FavoriteActivity extends AppCompatActivity implements ProductAdapte
         favoritesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         favoritesRecyclerView.setAdapter(productAdapter);
 
-        Button goToChatButton = findViewById(R.id.btnGoToChat);
-        goToChatButton.setOnClickListener(v -> {
-            Intent intent = new Intent(FavoriteActivity.this, ChatListActivity.class);
-            startActivity(intent);
-        });
-
-
         MaterialButtonToggleGroup toggleGroup = findViewById(R.id.filterToggleGroup);
         toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (isChecked) {
