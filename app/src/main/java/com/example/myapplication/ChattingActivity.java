@@ -6,11 +6,14 @@ import android.os.Handler;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +30,7 @@ public class ChattingActivity extends AppCompatActivity {
     private User friendUser;
     private List<Message> chatMessages;
     private Handler handler = new Handler(); // Handler for delayed reply
-
+    private Product product;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +46,7 @@ public class ChattingActivity extends AppCompatActivity {
         String currentUserId = getIntent().getStringExtra("currentUserId");
         String friendUserId = getIntent().getStringExtra("friendUserId");
         String friendUserName = getIntent().getStringExtra("friendUserName");
+        product = (Product) getIntent().getSerializableExtra("product");
 
         if (currentUserId == null) currentUserId = "user1";
         if (friendUserId == null) friendUserId = "user2";
@@ -56,8 +60,9 @@ public class ChattingActivity extends AppCompatActivity {
 
         TextView textUserListingName = findViewById(R.id.textUserListingName);
         TextView textListingPrice = findViewById(R.id.textListingPrice);
+        ImageView productImageView = findViewById(R.id.productImageView);
 
-        if (friendUser.getName().equalsIgnoreCase("Alice")) {
+        /*if (friendUser.getName().equalsIgnoreCase("Alice")) {
             friendUser.addListing(new Product("p1", "Book", 10, "url1", "Available", friendUser.getUserId(), "Used", "Books", "Good book", "City"));
         } else if (friendUser.getName().equalsIgnoreCase("Bob")) {
             friendUser.addListing(new Product("p3", "Notebook", 5, "url3", "Available", friendUser.getUserId(), "Used", "Stationery", "Notebook 100 pages", "City"));
@@ -109,6 +114,49 @@ public class ChattingActivity extends AppCompatActivity {
             chatMessages.add(new Message("user4", "Pretty good, thanks!", System.currentTimeMillis() - 50000));
             chatMessages.add(new Message("user4", "Where do you wanna meet?", System.currentTimeMillis() - 50000));
         }
+        */
+
+        // --- Now use the product data to populate the UI ---
+        if (product != null) {
+            // Find the seller's name from the ProductRepository or pass it via intent
+            // For now, let's just use the ID. A better approach would be fetching the user's name.
+            String sellerName = "Seller " + product.getSellerId();
+            headerText.setText(sellerName); // Set the chat header to the seller's name/ID
+
+            // Populate the product banner
+            textUserListingName.setText(product.getName());
+            textListingPrice.setText(String.format("$%.2f", product.getPrice()));
+
+            Glide.with(this)
+                    .load(product.getImageUrl())
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .into(productImageView);
+
+        } else {
+            // Handle case where product is not passed (optional)
+            headerText.setText("Chat");
+            textUserListingName.setText("No product specified");
+            textListingPrice.setText("");
+        }
+
+        // The rest of your chat logic can remain largely the same.
+        // You can remove all the hardcoded messages for "Alice", "Bob", and "Charlie".
+        chatMessages = new ArrayList<>();
+
+        Button buttonViewListings = findViewById(R.id.buttonViewListings);
+        buttonViewListings.setOnClickListener(v -> {
+            // Check if the product object exists before trying ProcessBuilder.Redirect.to use it.
+            if (product != null) {
+                // Create an intent to go back to the BuyItemActivity.
+                Intent intent = new Intent(ChattingActivity.this, BuyItemActivity.class);
+
+                // Pass the *same product* back to the activity.
+                intent.putExtra("product", product);
+
+                // Start the activity.
+                startActivity(intent);
+            }
+        });
 
         // Setup RecyclerView
         chatAdapter = new ChattingAdapter(chatMessages, currentUser.getUserId());
@@ -129,12 +177,14 @@ public class ChattingActivity extends AppCompatActivity {
                 recyclerView.scrollToPosition(chatMessages.size() - 1);
                 editTextMessage.setText("");
 
-                // 2️⃣ Only Charlie replies automatically once
+                /*// 2️⃣ Only Charlie replies automatically once
                 if (friendUser.getName().equalsIgnoreCase("Charlie") && !charlieHasReplied.get()) {
                     charlieHasReplied.set(true); // mark that Charlie started replying
                     String[] replies = {"See you there"};
                     sendCharlieRepliesSequentially(replies, 0);
-                }
+                }*/
+
+                generateFakeReply(messageText);
             }
         });
     }
@@ -150,5 +200,33 @@ public class ChattingActivity extends AppCompatActivity {
             // Call the next reply
             sendCharlieRepliesSequentially(replies, index + 1);
         }, 2000); // 2-second delay for each message
+    }
+
+    private void generateFakeReply(String userMessage) {
+        // Wait for a couple of seconds to make it feel real
+        handler.postDelayed(() -> {
+            String replyText;
+            String lowerCaseMessage = userMessage.toLowerCase();
+
+            // Simple keyword-based logic for the reply
+            if (lowerCaseMessage.contains("available")) {
+                replyText = "Yes, it's still available! Are you interested?";
+            } else if (lowerCaseMessage.contains("meet") || lowerCaseMessage.contains("location")) {
+                replyText = "I can meet on campus near the library. Does that work for you?";
+            } else if (lowerCaseMessage.contains("price") || lowerCaseMessage.contains("negotiate")) {
+                replyText = "The price is pretty firm, but I can do $2 off since you're a student.";
+            } else if (lowerCaseMessage.contains("hi") || lowerCaseMessage.contains("hello")) {
+                replyText = "Hello! Thanks for your interest in the " + product.getName() + ".";
+            } else {
+                replyText = "Got it. Let me check and get back to you shortly."; // A generic default reply
+            }
+
+            // Create and display the fake reply message
+            Message replyMessage = new Message(friendUser.getUserId(), replyText, System.currentTimeMillis());
+            chatMessages.add(replyMessage);
+            chatAdapter.notifyItemInserted(chatMessages.size() - 1);
+            recyclerView.scrollToPosition(chatMessages.size() - 1);
+
+        }, 1500); // 1.5-second delay
     }
 }

@@ -45,6 +45,7 @@ public class BuyItemActivity extends AppCompatActivity {
             Intent chatIntent = new Intent(BuyItemActivity.this, ChattingActivity.class);
             chatIntent.putExtra("currentUserId", currentUser.getUserId());
             chatIntent.putExtra("friendUserId", product.getSellerId());
+            chatIntent.putExtra("product", product);
             startActivity(chatIntent);
         });
 
