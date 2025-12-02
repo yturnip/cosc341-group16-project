@@ -64,6 +64,7 @@
                     android:id="@+id/filterIcon"
                     android:layout_width="22dp"
                     android:layout_height="22dp"
+                    android:layout_weight="0"
                     android:src="@drawable/filter"/>
             </LinearLayout>
         </LinearLayout>
