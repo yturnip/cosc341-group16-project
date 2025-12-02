@@ -53,6 +53,7 @@ public class ResultActivity extends AppCompatActivity {
 
         //   Apply search and filter
         List<Product> filteredList = allProducts.stream()
+                .filter(p -> p.getStatus().equalsIgnoreCase("Available"))
                 .filter(p -> finalKeyword == null || finalKeyword.isEmpty() ||
                         p.getName().toLowerCase().contains(finalKeyword.toLowerCase()))
                 .filter(p -> finalCategory == null || finalCategory.isEmpty() ||
