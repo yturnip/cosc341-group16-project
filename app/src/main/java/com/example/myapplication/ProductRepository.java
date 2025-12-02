@@ -89,7 +89,7 @@ public class ProductRepository {
         String chairUrl = getImageUrl("Gaming Chair");
 
         // Create sample products
-        allProducts.add(new Product("prod1", "Used Textbook", 25.00, textbookUrl, "Available", sellerA.getUserId(), "Used", "School Supplies", "Good", "Kelowna"));
+        allProducts.add(new Product("prod1", "Used Textbook", 25.00, textbookUrl, "Available", sellerA.getUserId(), "Used", "Books", "Good", "Kelowna"));
         allProducts.add(new Product("prod2", "Desk Lamp", 15.00, lampUrl, "Sold", sellerB.getUserId(), "Used", "Electronics", "Good", "Kelowna"));
         allProducts.add(new Product("prod3", "Mini Fridge", 50.00, fridgeUrl, "Available", sellerC.getUserId(), "Used", "Electronics", "Good", "Kelowna"));
         allProducts.add(new Product("prod4", "Gaming Chair", 120.00, chairUrl, "Pending", sellerA.getUserId(), "Used", "Furniture", "Good", "Kelowna"));
@@ -99,12 +99,12 @@ public class ProductRepository {
 
         // --- 8 NEW AVAILABLE PRODUCTS ---
         allProducts.add(new Product("prod5", "Wireless Mouse", 20.00, getImageUrl("Wireless Mouse"), "Available", sellerB.getUserId(), "Used - Like New", "Electronics", "Like New", "Vancouver"));
-        allProducts.add(new Product("prod6", "History Textbook", 45.00, getImageUrl("History Textbook"), "Available", sellerC.getUserId(), "Used - Good", "School Supplies", "Good", "Kelowna"));
+        allProducts.add(new Product("prod6", "History Textbook", 45.00, getImageUrl("History Textbook"), "Available", sellerC.getUserId(), "Used - Good", "Books", "Good", "Kelowna"));
         allProducts.add(new Product("prod7", "Winter Jacket", 75.00, getImageUrl("Winter Jacket"), "Available", sellerA.getUserId(), "Used - Good", "Clothing", "Good", "Kelowna"));
         allProducts.add(new Product("prod8", "Bookshelf", 40.00, getImageUrl("Bookshelf"), "Available", sellerB.getUserId(), "Used - Fair", "Furniture", "Fair", "Vernon"));
         allProducts.add(new Product("prod9", "Blender", 30.00, getImageUrl("Blender"), "Available", sellerC.getUserId(), "Used - Like New", "Kitchenware", "Like New", "Kelowna"));
-        allProducts.add(new Product("prod10", "Acoustic Guitar", 150.00, getImageUrl("Acoustic Guitar"), "Available", sellerA.getUserId(), "Used - Good", "Hobbies", "Good", "Vancouver"));
-        allProducts.add(new Product("prod11", "Yoga Mat", 10.00, getImageUrl("Yoga Mat"), "Available", sellerB.getUserId(), "New", "Sports", "New", "Kelowna"));
+        allProducts.add(new Product("prod10", "Acoustic Guitar", 150.00, getImageUrl("Acoustic Guitar"), "Available", sellerA.getUserId(), "Used - Good", "Room Decor", "Good", "Vancouver"));
+        allProducts.add(new Product("prod11", "Yoga Mat", 10.00, getImageUrl("Yoga Mat"), "Available", sellerB.getUserId(), "New", "Room Decor", "New", "Kelowna"));
         allProducts.add(new Product("prod12", "Monitor", 180.00, getImageUrl("Monitor"), "Available", sellerC.getUserId(), "Used - Like New", "Electronics", "Like New", "Kelowna"));
 
         // Make the user like some of the items
