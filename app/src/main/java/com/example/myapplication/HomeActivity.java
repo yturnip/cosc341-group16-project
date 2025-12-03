@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -48,10 +49,6 @@ public class HomeActivity extends AppCompatActivity implements ProductAdapter.On
             return insets;
         });
 
-        // setupCategoriesRecycler();
-        // setupProductsRecycler();
-
-
         // 1. Initialize Repository and get data
         repository = ProductRepository.getInstance();
         currentUser = repository.getCurrentUser();
@@ -64,6 +61,13 @@ public class HomeActivity extends AppCompatActivity implements ProductAdapter.On
         setupBottomNavigation();
         setupCategoriesRecycler();
         setupProductsRecycler();
+
+        ImageView profileHomePage = findViewById(R.id.profileHomePage);
+
+        profileHomePage.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, ProfilePage.class);
+            startActivity(intent);
+        });
     }
 
     private void setupCategoriesRecycler(){
