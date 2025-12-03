@@ -77,6 +77,9 @@ public class ChatListActivity extends AppCompatActivity {
             } else if (itemId == R.id.nav_chat) {
                 // Already on chat, do nothing
                 return true;
+            } else if (itemId == R.id.nav_profile) {
+                startActivity(new Intent(getApplicationContext(), ProfilePage.class));
+                return true;
             }
 
             return false;
