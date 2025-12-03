@@ -48,11 +48,8 @@ public class HomeActivity extends AppCompatActivity implements ProductAdapter.On
             return insets;
         });
 
-        //setupCategoriesRecycler();
-        //setupProductsRecycler();
-
-
-        /// //////
+        // setupCategoriesRecycler();
+        // setupProductsRecycler();
 
 
         // 1. Initialize Repository and get data
@@ -95,7 +92,7 @@ public class HomeActivity extends AppCompatActivity implements ProductAdapter.On
 
     private void setupProductsRecycler(){
         List<Product> productList = ProductRepository.getInstance().getAllProducts()
-                .stream().filter(p ->p.getStatus().equals("Available"))
+                .stream().filter(p -> p.getStatus().equals("Available"))
                 .collect(Collectors.toList());
 
         if (productAdapter == null) {

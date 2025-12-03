@@ -55,6 +55,18 @@ public class ProductRepository {
                 .collect(Collectors.toList());
     }
 
+    // return all the listings a user has
+    public List<Product> getUserListings() {
+        if (currentUser == null) {
+            return new ArrayList<>(); // Return empty list if no user
+        }
+        List<Product> userListings = currentUser.getListings();
+        String userId = currentUser.getUserId();
+        return allProducts.stream()
+                .filter(product -> product.getSellerId().equals(userId))
+                .collect(Collectors.toList());
+    }
+
     // --- User Management ---
 
     public User getCurrentUser() {
@@ -65,7 +77,12 @@ public class ProductRepository {
 
     private void loadSampleData() {
         // Create a sample user
+
+        // use this to test regular buyer or user
         currentUser = new User("user123", "Alex", "url_to_profile_pic");
+
+        // use this to test the seller's profile page
+        currentUser = new User("seller_jane_doe", "Alex", "url_to_profile_pic");
         allUsers.add(currentUser);
 
         // The sellers
