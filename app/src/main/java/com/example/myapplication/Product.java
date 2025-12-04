@@ -61,4 +61,14 @@ public class Product implements Serializable {
     public String getDescription() { return description; }
 
     public String getLocation() { return location; }
+
+    public void setStatus(String status) {this.status = status;}
+    public void setName(String name) {this.name = name;}
+    public void setPrice(double price) {this.price = price;}
+    public void setImageUrl(String imageUrl) {this.imageUrl = imageUrl;}
+    public void setSellerId(String sellerId) {this.sellerId = sellerId;}
+    public void setCondition(String condition) { this.condition = condition; }
+    public void setCategory(String category) { this.category = category; }
+    public void setDescription(String description) {this.description = description;}
+    public void setLocation(String location) {this.location = location;}
 }

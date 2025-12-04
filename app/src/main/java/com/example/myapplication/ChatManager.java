@@ -67,7 +67,7 @@ public class ChatManager {
 
     private void loadPresetConversations() {
         // We need the current user's ID to create the conversation ID correctly.
-        String currentUserId = "user123"; // This must match the ID in ProductRepository
+        String currentUserId = ProductRepository.getInstance().getCurrentUser().getUserId();
 
         // --- Conversation with Alice ---
         String aliceConvoId = currentUserId + "_user_alice_prod_sold_mic";
