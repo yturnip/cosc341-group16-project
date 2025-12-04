@@ -97,6 +97,7 @@ public class HomeActivity extends AppCompatActivity implements ProductAdapter.On
     private void setupProductsRecycler(){
         List<Product> productList = ProductRepository.getInstance().getAllProducts()
                 .stream().filter(p -> p.getStatus().equals("Available"))
+                .filter(p -> !(p.getSellerId().equals(currentUser.getUserId())))
                 .collect(Collectors.toList());
 
         if (productAdapter == null) {
