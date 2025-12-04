@@ -79,10 +79,10 @@ public class ProductRepository {
         // Create a sample user
 
         // use this to test regular buyer or user
-        //currentUser = new User("user123", "Alex Tanh", "url_to_profile_pic");
+        currentUser = new User("user123", "Alex Tanh", "url_to_profile_pic");
 
         // use this to test the seller's profile page
-        currentUser = new User("seller_jane_doe", "Jane Doe", "url_to_profile_pic");
+        //currentUser = new User("seller_jane_doe", "Jane Doe", "url_to_profile_pic");
         allUsers.add(currentUser);
 
         // The sellers
