@@ -1,6 +1,6 @@
 # ![Test Image 1](https://github.com/yturnip/cosc341-group16-project/blob/main/app/src/main/res/drawable/unicorner_logo.png) Unicorner - The Student Marketplace
 
-Unicorner is an Android marketplace platform built specifically for post-secondary students. It aims to create a trusted, local community for buying and selling items, promoting reusability and helping students save money.Users can browse listings, find great deals on campus, sell their own items, and connect with other students through a built-in chat system.
+Unicorner is an Android marketplace platform built specifically for post-secondary students. It aims to create a trusted, local community for buying and selling items, promoting reusability, and helping students save money. Users can browse listings, find great deals on campus, sell their own items, and connect with other students through a built-in chat system.
 
 ---
 
@@ -9,9 +9,9 @@ Unicorner is an Android marketplace platform built specifically for post-seconda
 - [Core Features](#core-features)
 - [Tech Stack & Architecture](#tech-stack-and-architecture)
 - [Key Architectural Concepts](#key-architectural-concepts)
-- [Getting Started](#getting-started))
+- [Getting Started](#getting-started)
 - [Project Structure](#project-structure)
-- [Future Work](#future-work))
+- [Future Work](#future-work)
 
 ---
 
