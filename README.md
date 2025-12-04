@@ -7,11 +7,12 @@ Unicorner is an Android marketplace platform built specifically for post-seconda
 ## Table of Contents
 
 - [Core Features](#core-features)
-- [Tech Stack & Architecture](#tech-stack-and-architecture)
+- [Tech Stack & Architecture](#tech-stack-&-architecture)
 - [Key Architectural Concepts](#key-architectural-concepts)
 - [Getting Started](#getting-started)
 - [Project Structure](#project-structure)
 - [Future Work](#future-work)
+- [Team](#team)
 
 ---
 
